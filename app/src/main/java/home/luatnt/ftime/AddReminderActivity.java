@@ -36,16 +36,12 @@ import java.util.Calendar;
 import home.luatnt.ftime.data.AlarmReminderContract;
 import home.luatnt.ftime.reminder.AlarmScheduler;
 
-/**
- * Created by delaroy on 10/26/17.
- */
 
 public class AddReminderActivity extends AppCompatActivity implements
         TimePickerDialog.OnTimeSetListener,
         DatePickerDialog.OnDateSetListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int EXISTING_VEHICLE_LOADER = 0;
-
 
     private Toolbar mToolbar;
     private EditText mTitleText;
@@ -67,7 +63,6 @@ public class AddReminderActivity extends AppCompatActivity implements
     private Uri mCurrentReminderUri;
     private boolean mVehicleHasChanged = false;
 
-    // Values for orientation change
     private static final String KEY_TITLE = "title_key";
     private static final String KEY_TIME = "time_key";
     private static final String KEY_DATE = "date_key";
@@ -76,8 +71,6 @@ public class AddReminderActivity extends AppCompatActivity implements
     private static final String KEY_REPEAT_TYPE = "repeat_type_key";
     private static final String KEY_ACTIVE = "active_key";
 
-
-    // Constant values in milliseconds
     private static final long milMinute = 60000L;
     private static final long milHour = 3600000L;
     private static final long milDay = 86400000L;
@@ -101,22 +94,13 @@ public class AddReminderActivity extends AppCompatActivity implements
         mCurrentReminderUri = intent.getData();
 
         if (mCurrentReminderUri == null) {
-
             setTitle(getString(R.string.editor_activity_title_new_reminder));
-
-            // Invalidate the options menu, so the "Delete" menu option can be hidden.
-            // (It doesn't make sense to delete a reminder that hasn't been created yet.)
             invalidateOptionsMenu();
         } else {
-
             setTitle(getString(R.string.editor_activity_title_edit_reminder));
-
-
             getLoaderManager().initLoader(EXISTING_VEHICLE_LOADER, null, this);
         }
 
-
-        // Initialize Views
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mTitleText = (EditText) findViewById(R.id.reminder_title);
         mDateText = (TextView) findViewById(R.id.set_date);
@@ -128,7 +112,6 @@ public class AddReminderActivity extends AppCompatActivity implements
         mFAB1 = (FloatingActionButton) findViewById(R.id.starred1);
         mFAB2 = (FloatingActionButton) findViewById(R.id.starred2);
 
-        // Initialize default values
         mActive = "true";
         mRepeat = "true";
         mRepeatNo = Integer.toString(1);
@@ -144,9 +127,7 @@ public class AddReminderActivity extends AppCompatActivity implements
         mDate = mDay + "/" + mMonth + "/" + mYear;
         mTime = mHour + ":" + mMinute;
 
-        // Setup Reminder Title EditText
         mTitleText.addTextChangedListener(new TextWatcher() {
-
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
@@ -160,14 +141,12 @@ public class AddReminderActivity extends AppCompatActivity implements
             public void afterTextChanged(Editable s) {}
         });
 
-        // Setup TextViews using reminder values
         mDateText.setText(mDate);
         mTimeText.setText(mTime);
         mRepeatNoText.setText(mRepeatNo);
         mRepeatTypeText.setText(mRepeatType);
         mRepeatText.setText("Every " + mRepeatNo + " " + mRepeatType + "(s)");
 
-        // To save state on device rotation
         if (savedInstanceState != null) {
             String savedTitle = savedInstanceState.getString(KEY_TITLE);
             mTitleText.setText(savedTitle);
@@ -196,7 +175,6 @@ public class AddReminderActivity extends AppCompatActivity implements
             mActive = savedInstanceState.getString(KEY_ACTIVE);
         }
 
-        // Setup up active buttons
         if (mActive.equals("false")) {
             mFAB1.setVisibility(View.VISIBLE);
             mFAB2.setVisibility(View.GONE);
@@ -227,7 +205,6 @@ public class AddReminderActivity extends AppCompatActivity implements
         outState.putCharSequence(KEY_ACTIVE, mActive);
     }
 
-    // On clicking Time picker
     public void setTime(View v){
         if(mCurrentReminderUri == null){
             Toast.makeText(this, "click again on the reminder list to set time alarm", Toast.LENGTH_LONG).show();
@@ -244,7 +221,6 @@ public class AddReminderActivity extends AppCompatActivity implements
         tpd.show(getFragmentManager(), "Timepickerdialog");
     }
 
-    // On clicking Date picker
     public void setDate(View v){
         if(mCurrentReminderUri == null){
             Toast.makeText(this, "click again on the reminder list to set date alarm", Toast.LENGTH_LONG).show();
@@ -260,7 +236,6 @@ public class AddReminderActivity extends AppCompatActivity implements
         dpd.show(getFragmentManager(), "Datepickerdialog");
     }
 
-    // Obtain time from time picker
     @Override
     public void onTimeSet(RadialPickerLayout view, int hourOfDay, int minute) {
         mHour = hourOfDay;
@@ -273,7 +248,6 @@ public class AddReminderActivity extends AppCompatActivity implements
         mTimeText.setText(mTime);
     }
 
-    // Obtain date from date picker
     @Override
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
         monthOfYear ++;
@@ -284,7 +258,6 @@ public class AddReminderActivity extends AppCompatActivity implements
         mDateText.setText(mDate);
     }
 
-    // On clicking the active button
     public void selectFab1(View v) {
         mFAB1 = (FloatingActionButton) findViewById(R.id.starred1);
         mFAB1.setVisibility(View.GONE);
@@ -293,7 +266,6 @@ public class AddReminderActivity extends AppCompatActivity implements
         mActive = "true";
     }
 
-    // On clicking the inactive button
     public void selectFab2(View v) {
         mFAB2 = (FloatingActionButton) findViewById(R.id.starred2);
         mFAB2.setVisibility(View.GONE);
@@ -302,7 +274,6 @@ public class AddReminderActivity extends AppCompatActivity implements
         mActive = "false";
     }
 
-    // On clicking the repeat switch
     public void onSwitchRepeat(View view) {
         boolean on = ((Switch) view).isChecked();
         if (on) {
@@ -314,7 +285,6 @@ public class AddReminderActivity extends AppCompatActivity implements
         }
     }
 
-    // On clicking repeat type button
     public void selectRepeatType(View v){
         final String[] items = new String[5];
 
@@ -340,12 +310,10 @@ public class AddReminderActivity extends AppCompatActivity implements
         alert.show();
     }
 
-    // On clicking repeat interval button
     public void setRepeatNo(View v){
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle("Enter Number");
 
-        // Create EditText box to input repeat number
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_NUMBER);
         alert.setView(input);
@@ -367,7 +335,6 @@ public class AddReminderActivity extends AppCompatActivity implements
                 });
         alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                // do nothing
             }
         });
         alert.show();
@@ -375,8 +342,6 @@ public class AddReminderActivity extends AppCompatActivity implements
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu options from the res/menu/menu_editor.xml file.
-        // This adds menu items to the app bar.
         getMenuInflater().inflate(R.menu.menu_add_reminder, menu);
         return true;
     }
@@ -388,7 +353,6 @@ public class AddReminderActivity extends AppCompatActivity implements
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        // If this is a new reminder, hide the "Delete" menu item.
         if (mCurrentReminderUri == null) {
             MenuItem menuItem = menu.findItem(R.id.discard_reminder);
             menuItem.setVisible(false);
@@ -398,49 +362,31 @@ public class AddReminderActivity extends AppCompatActivity implements
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        // User clicked on a menu option in the app bar overflow menu
         switch (item.getItemId()) {
-            // Respond to a click on the "Save" menu option
             case R.id.save_reminder:
-
-
                 if (mTitleText.getText().toString().length() == 0){
                     mTitleText.setError("Reminder Title cannot be blank!");
-                }
-
-                else {
+                } else {
                     saveReminder();
                     finish();
                 }
                 return true;
-            // Respond to a click on the "Delete" menu option
             case R.id.discard_reminder:
-                // Pop up confirmation dialog for deletion
                 showDeleteConfirmationDialog();
                 return true;
-            // Respond to a click on the "Up" arrow button in the app bar
             case android.R.id.home:
-                // If the reminder hasn't changed, continue with navigating up to parent activity
-                // which is the {@link MainActivity}.
                 if (!mVehicleHasChanged) {
                     NavUtils.navigateUpFromSameTask(AddReminderActivity.this);
                     return true;
                 }
 
-                // Otherwise if there are unsaved changes, setup a dialog to warn the user.
-                // Create a click listener to handle the user confirming that
-                // changes should be discarded.
                 DialogInterface.OnClickListener discardButtonClickListener =
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                // User clicked "Discard" button, navigate to parent activity.
                                 NavUtils.navigateUpFromSameTask(AddReminderActivity.this);
                             }
                         };
-
-                // Show a dialog that notifies the user they have unsaved changes
                 showUnsavedChangesDialog(discardButtonClickListener);
                 return true;
         }
@@ -449,49 +395,38 @@ public class AddReminderActivity extends AppCompatActivity implements
     }
 
     private void showUnsavedChangesDialog(
-            DialogInterface.OnClickListener discardButtonClickListener) {
-        // Create an AlertDialog.Builder and set the message, and click listeners
-        // for the postivie and negative buttons on the dialog.
+        DialogInterface.OnClickListener discardButtonClickListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.unsaved_changes_dialog_msg);
         builder.setPositiveButton(R.string.discard, discardButtonClickListener);
         builder.setNegativeButton(R.string.keep_editing, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                // User clicked the "Keep editing" button, so dismiss the dialog
-                // and continue editing the reminder.
                 if (dialog != null) {
                     dialog.dismiss();
                 }
             }
         });
 
-        // Create and show the AlertDialog
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
 
     private void showDeleteConfirmationDialog() {
-        // Create an AlertDialog.Builder and set the message, and click listeners
-        // for the postivie and negative buttons on the dialog.
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.delete_dialog_msg);
         builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                // User clicked the "Delete" button, so delete the reminder.
                 deleteReminder();
             }
         });
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                // User clicked the "Cancel" button, so dismiss the dialog
-                // and continue editing the reminder.
                 if (dialog != null) {
                     dialog.dismiss();
                 }
             }
         });
 
-        // Create and show the AlertDialog
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
@@ -510,7 +445,6 @@ public class AddReminderActivity extends AppCompatActivity implements
                         Toast.LENGTH_SHORT).show();
             }
         }
-
         finish();
     }
 
@@ -525,8 +459,6 @@ public class AddReminderActivity extends AppCompatActivity implements
         values.put(AlarmReminderContract.AlarmReminderEntry.KEY_REPEAT_TYPE, mRepeatType);
         values.put(AlarmReminderContract.AlarmReminderEntry.KEY_ACTIVE, mActive);
 
-
-        // Set up calender for creating the notification
         mCalendar.set(Calendar.MONTH, --mMonth);
         mCalendar.set(Calendar.YEAR, mYear);
         mCalendar.set(Calendar.DAY_OF_MONTH, mDay);
@@ -536,7 +468,6 @@ public class AddReminderActivity extends AppCompatActivity implements
 
         long selectedTimestamp =  mCalendar.getTimeInMillis();
 
-        // Check repeat type
         if (mRepeatType.equals("Minute")) {
             mRepeatTime = Integer.parseInt(mRepeatNo) * milMinute;
         } else if (mRepeatType.equals("Hour")) {
@@ -550,37 +481,23 @@ public class AddReminderActivity extends AppCompatActivity implements
         }
 
         if (mCurrentReminderUri == null) {
-            // This is a NEW reminder, so insert a new reminder into the provider,
-            // returning the content URI for the new reminder.
             Uri newUri = getContentResolver().insert(AlarmReminderContract.AlarmReminderEntry.CONTENT_URI, values);
 
-            // Show a toast message depending on whether or not the insertion was successful.
             if (newUri == null) {
-                // If the new content URI is null, then there was an error with insertion.
-                Toast.makeText(this, getString(R.string.editor_insert_reminder_failed),
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.editor_insert_reminder_failed), Toast.LENGTH_SHORT).show();
             } else {
-                // Otherwise, the insertion was successful and we can display a toast.
-                Toast.makeText(this, getString(R.string.editor_insert_reminder_successful),
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.editor_insert_reminder_successful), Toast.LENGTH_SHORT).show();
             }
         } else {
 
             int rowsAffected = getContentResolver().update(mCurrentReminderUri, values, null, null);
-
-            // Show a toast message depending on whether or not the update was successful.
             if (rowsAffected == 0) {
-                // If no rows were affected, then there was an error with the update.
-                Toast.makeText(this, getString(R.string.editor_update_reminder_failed),
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.editor_update_reminder_failed), Toast.LENGTH_SHORT).show();
             } else {
-                // Otherwise, the update was successful and we can display a toast.
-                Toast.makeText(this, getString(R.string.editor_update_reminder_successful),
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.editor_update_reminder_successful), Toast.LENGTH_SHORT).show();
             }
         }
 
-        // Create a new notification
         if (mActive.equals("true")) {
             if (mRepeat.equals("true")) {
                 new AlarmScheduler().setRepeatAlarm(getApplicationContext(), selectedTimestamp, mCurrentReminderUri, mRepeatTime);
@@ -592,21 +509,16 @@ public class AddReminderActivity extends AppCompatActivity implements
                     Toast.LENGTH_LONG).show();
         }
 
-        // Create toast to confirm new reminder
         Toast.makeText(getApplicationContext(), "Saved",
                 Toast.LENGTH_SHORT).show();
 
     }
 
-    // On pressing the back button
     @Override
     public void onBackPressed() {
         super.onBackPressed();
 
     }
-
-
-
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
@@ -622,13 +534,7 @@ public class AddReminderActivity extends AppCompatActivity implements
                 AlarmReminderContract.AlarmReminderEntry.KEY_ACTIVE,
         };
 
-        // This loader will execute the ContentProvider's query method on a background thread
-        return new CursorLoader(this,   // Parent activity context
-                mCurrentReminderUri,         // Query the content URI for the current reminder
-                projection,             // Columns to include in the resulting Cursor
-                null,                   // No selection clause
-                null,                   // No selection arguments
-                null);                  // Default sort order
+        return new CursorLoader(this, mCurrentReminderUri, projection, null, null, null);
     }
 
     @Override
@@ -637,8 +543,6 @@ public class AddReminderActivity extends AppCompatActivity implements
             return;
         }
 
-        // Proceed with moving to the first row of the cursor and reading data from it
-        // (This should be the only row in the cursor)
         if (cursor.moveToFirst()) {
             int titleColumnIndex = cursor.getColumnIndex(AlarmReminderContract.AlarmReminderEntry.KEY_TITLE);
             int dateColumnIndex = cursor.getColumnIndex(AlarmReminderContract.AlarmReminderEntry.KEY_DATE);
@@ -646,28 +550,22 @@ public class AddReminderActivity extends AppCompatActivity implements
             int repeatColumnIndex = cursor.getColumnIndex(AlarmReminderContract.AlarmReminderEntry.KEY_REPEAT);
             int repeatNoColumnIndex = cursor.getColumnIndex(AlarmReminderContract.AlarmReminderEntry.KEY_REPEAT_NO);
             int repeatTypeColumnIndex = cursor.getColumnIndex(AlarmReminderContract.AlarmReminderEntry.KEY_REPEAT_TYPE);
-            int activeColumnIndex = cursor.getColumnIndex(AlarmReminderContract.AlarmReminderEntry.KEY_ACTIVE);
+//            int activeColumnIndex = cursor.getColumnIndex(AlarmReminderContract.AlarmReminderEntry.KEY_ACTIVE);
 
-            // Extract out the value from the Cursor for the given column index
             String title = cursor.getString(titleColumnIndex);
             String date = cursor.getString(dateColumnIndex);
             String time = cursor.getString(timeColumnIndex);
             String repeat = cursor.getString(repeatColumnIndex);
             String repeatNo = cursor.getString(repeatNoColumnIndex);
             String repeatType = cursor.getString(repeatTypeColumnIndex);
-            String active = cursor.getString(activeColumnIndex);
+//            String active = cursor.getString(activeColumnIndex);
 
-
-
-            // Update the views on the screen with the values from the database
             mTitleText.setText(title);
             mDateText.setText(date);
             mTimeText.setText(time);
             mRepeatNoText.setText(repeatNo);
             mRepeatTypeText.setText(repeatType);
             mRepeatText.setText("Every " + repeatNo + " " + repeatType + "(s)");
-            // Setup up active buttons
-            // Setup repeat switch
             if (repeat == null){
                 mRepeatSwitch.setChecked(false);
                 mRepeatText.setText(R.string.repeat_off);
@@ -679,15 +577,9 @@ public class AddReminderActivity extends AppCompatActivity implements
             } else if (repeat.equals("true")) {
                 mRepeatSwitch.setChecked(true);
             }
-
         }
-
-
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-
-    }
-
+    public void onLoaderReset(Loader<Cursor> loader) {}
 }

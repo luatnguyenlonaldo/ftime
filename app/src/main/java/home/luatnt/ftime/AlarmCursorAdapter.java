@@ -18,13 +18,14 @@ import home.luatnt.ftime.data.AlarmReminderContract;
 public class AlarmCursorAdapter extends CursorAdapter {
 
     private TextView mTitleText, mDateAndTimeText, mRepeatInfoText;
-    private ImageView mActiveImage , mThumbnailImage;
+    private ImageView mActiveImage, mThumbnailImage;
     private ColorGenerator mColorGenerator = ColorGenerator.DEFAULT;
     private TextDrawable mDrawableBuilder;
 
     public AlarmCursorAdapter(Context context, Cursor c) {
         super(context, c, 0 /* flags */);
     }
+
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         return LayoutInflater.from(context).inflate(R.layout.alarm_items, parent, false);
@@ -55,25 +56,22 @@ public class AlarmCursorAdapter extends CursorAdapter {
         String repeatType = cursor.getString(repeatTypeColumnIndex);
         String active = cursor.getString(activeColumnIndex);
 
-
-
-
         setReminderTitle(title);
 
-        if (date != null){
+        if (date != null) {
             String dateTime = date + " " + time;
             setReminderDateTime(dateTime);
         } else {
             mDateAndTimeText.setText("Date not set");
         }
 
-        if(repeat != null){
+        if (repeat != null) {
             setReminderRepeatInfo(repeat, repeatNo, repeatType);
         } else {
             mRepeatInfoText.setText("Repeat Not Set");
         }
 
-        if (active != null){
+        if (active != null) {
             setActiveImage(active);
         } else {
             mActiveImage.setImageResource(R.drawable.ic_notification_off_grey);
@@ -84,7 +82,7 @@ public class AlarmCursorAdapter extends CursorAdapter {
         mTitleText.setText(title);
         String letter = "A";
 
-        if(title != null && !title.isEmpty()) {
+        if (title != null && !title.isEmpty()) {
             letter = title.substring(0, 1);
         }
         int color = mColorGenerator.getRandomColor();
@@ -98,17 +96,17 @@ public class AlarmCursorAdapter extends CursorAdapter {
     }
 
     public void setReminderRepeatInfo(String repeat, String repeatNo, String repeatType) {
-        if(repeat.equals("true")){
+        if (repeat.equals("true")) {
             mRepeatInfoText.setText("Every " + repeatNo + " " + repeatType + "(s)");
-        }else if (repeat.equals("false")) {
+        } else if (repeat.equals("false")) {
             mRepeatInfoText.setText("Repeat Off");
         }
     }
 
-    public void setActiveImage(String active){
-        if(active.equals("true")){
+    public void setActiveImage(String active) {
+        if (active.equals("true")) {
             mActiveImage.setImageResource(R.drawable.ic_notification_on);
-        }else if (active.equals("false")) {
+        } else if (active.equals("false")) {
             mActiveImage.setImageResource(R.drawable.ic_notification_off_grey);
         }
 

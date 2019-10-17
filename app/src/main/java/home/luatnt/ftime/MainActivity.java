@@ -40,7 +40,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     TextView reminderText;
 
     private String alarmTitle = "";
-
     private static final int VEHICLE_LOADER = 0;
 
     @Override
@@ -51,31 +50,20 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         mToolbar.setTitle(R.string.app_name);
-
-
         reminderListView = (ListView) findViewById(R.id.list);
         reminderText = (TextView) findViewById(R.id.reminderText);
 
-
         View emptyView = findViewById(R.id.empty_view);
         reminderListView.setEmptyView(emptyView);
-
         mCursorAdapter = new AlarmCursorAdapter(this, null);
         reminderListView.setAdapter(mCursorAdapter);
-
         reminderListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-
                 Intent intent = new Intent(MainActivity.this, AddReminderActivity.class);
-
                 Uri currentVehicleUri = ContentUris.withAppendedId(AlarmReminderContract.AlarmReminderEntry.CONTENT_URI, id);
-
-                // Set the URI on the data field of the intent
                 intent.setData(currentVehicleUri);
-
                 startActivity(intent);
-
             }
         });
 
@@ -90,10 +78,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 addReminderTitle();
             }
         });
-
         getSupportLoaderManager().initLoader(VEHICLE_LOADER, null, this);
-
-
     }
 
     @Override
@@ -107,27 +92,18 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 AlarmReminderContract.AlarmReminderEntry.KEY_REPEAT_NO,
                 AlarmReminderContract.AlarmReminderEntry.KEY_REPEAT_TYPE,
                 AlarmReminderContract.AlarmReminderEntry.KEY_ACTIVE
-
         };
-
-        return new CursorLoader(this,   // Parent activity context
-                AlarmReminderContract.AlarmReminderEntry.CONTENT_URI,   // Provider content URI to query
-                projection,             // Columns to include in the resulting Cursor
-                null,                   // No selection clause
-                null,                   // No selection arguments
-                null);                  // Default sort order
-
+        return new CursorLoader(this, AlarmReminderContract.AlarmReminderEntry.CONTENT_URI, projection, null, null, null);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         mCursorAdapter.swapCursor(cursor);
-        if (cursor.getCount() > 0){
+        if (cursor.getCount() > 0) {
             reminderText.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             reminderText.setVisibility(View.INVISIBLE);
         }
-
     }
 
     @Override
@@ -136,8 +112,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     }
 
-    public void addReminderTitle(){
-
+    public void addReminderTitle() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Set Reminder Title");
 
@@ -148,26 +123,19 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (input.getText().toString().isEmpty()){
+                if (input.getText().toString().isEmpty()) {
                     return;
                 }
-
                 alarmTitle = input.getText().toString();
                 ContentValues values = new ContentValues();
-
                 values.put(AlarmReminderContract.AlarmReminderEntry.KEY_TITLE, alarmTitle);
-
                 Uri newUri = getContentResolver().insert(AlarmReminderContract.AlarmReminderEntry.CONTENT_URI, values);
-
                 restartLoader();
-
-
                 if (newUri == null) {
                     Toast.makeText(getApplicationContext(), "Setting Reminder Title failed", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getApplicationContext(), "Title set successfully", Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -176,11 +144,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 dialog.cancel();
             }
         });
-
         builder.show();
     }
 
-    public void restartLoader(){
+    public void restartLoader() {
         getSupportLoaderManager().restartLoader(VEHICLE_LOADER, null, this);
     }
 }
